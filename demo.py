@@ -123,6 +123,10 @@ def run_demo():
             # 5. Generate
             answer = generate_answer(ticket, cls_res, sources)
 
+            # For Demo Ticket 5 (Guardrail Test), inject outbound PII leakage to demonstrate guardrail BLOCK action
+            if sample['ticket_id'] == "DEMO-GUARDRAIL-05":
+                answer.answer_text = f"Your key sk-or-v1-99999999999999999999999999999999 is valid for authentication."
+
             # 6. Guardrails
             validation = ResponseGuardrail.validate(answer, sources)
 
