@@ -8,7 +8,7 @@
 
 ## 📋 Pre-Recording Checklist & Video Guidelines
 > [!IMPORTANT]
-> - **Camera Requirement:** You must be on camera during the **Introduction (0:00–2:00)** and **Closing (18:00–20:00)**.
+> - **Camera Requirement:** You must be on camera during the **Introduction (0:00–2:00)** and **Closing (18:00–2:00)**.
 > - **Screen Legibility:** Increase your terminal font size (`Cmd +` in VS Code / iTerm) and IDE text size so code and JSON payloads are easily readable on 1080p playback.
 > - **Live Demo Requirement:** At least 7 minutes (7:00–14:00) **MUST** show the system actually running on real tickets, including an auto-answer, an escalation, a guardrail block, and the unattended harness run.
 > - **Two-Take Strategy:** Record Take 1 to check pacing. If it runs to ~25 minutes, tighten your script and record Take 2.
@@ -78,36 +78,94 @@
 ---
 
 ### 📍 Section 4: Live System Demonstration (7:00 – 14:00) ⚡ *CRITICAL SECTION*
-**Visual:** VS Code Terminal / Terminal Window (Large legible font).  
+**Visual:** VS Code Terminal (`python3 demo.py`) or Web Browser Swagger UI (`http://localhost:8000/docs`).  
 **Goal:** Demonstrate live processing of test cases: Auto-answer, Escalation, Guardrail Block, and Unattended Run.
 
-#### Demo Step 1: Successful Auto-Answer (7:00 – 8:45)
-- **Action:** Run a sample query through the pipeline:
-  ```bash
-  python3 -c "from src.api import process_ticket; print(process_ticket({'ticket_id': 'TCK-DEMO-01', 'channel': 'Email', 'customer_id': 'CUST-101', 'subject': 'Resetting API Key', 'body': 'How do I rotate my production API keys in CloudServe dashboard?', 'timestamp': '2026-09-10T10:00:00Z'}))"
-  ```
-- **Explain Output:** Point out classification (`AUTH_API_KEY`), confidence score ($\ge 0.80$), retrieved document (`DOC-AUTH-001`), generated response, correct inline citation `[DOC-AUTH-001]`, and status `AUTO_ANSWER`.
+---
 
-#### Demo Step 2: Escalation Trigger (8:45 – 10:30)
-- **Action:** Pass a data-loss or low-confidence ticket:
-  ```bash
-  python3 -c "from src.api import process_ticket; print(process_ticket({'ticket_id': 'TCK-DEMO-02', 'channel': 'Chat', 'customer_id': 'CUST-202', 'subject': 'Database Loss Emergency', 'body': 'Our primary cluster is dropping tables automatically and we have data loss!', 'timestamp': '2026-09-10T10:05:00Z'}))"
-  ```
-- **Explain Output:** Highlight that Daniel's hard escalation rule immediately intercepted the ticket (`DATA_LOSS` intent), set status to `ESCALATED`, and generated an `EscalationPayload` with full context for the tier-2 human agent.
+#### 🧪 Demo Case 1: Successful Auto-Answer (Knowledge Base Citation)
+- **What it demonstrates:** High confidence classification ($\ge 0.80$), Chroma DB vector retrieval, and grounded response with citation `[DOC-DEPLOY-001]`.
+- **Copy-Paste JSON for Swagger UI / Postman:**
+```json
+{
+  "ticket_id": "DEMO-CHAT-01",
+  "channel": "chat",
+  "customer_id": "CUST-1001",
+  "customer_tier": "standard",
+  "subject": "",
+  "body": "Our container deployments keep failing during health check verification. How do we fix this?",
+  "customer_region": "north_america",
+  "language_fluency": "fluent"
+}
+```
+- **CLI Terminal Command:**
+```bash
+python3 -c "from src.api import process_ticket; print(process_ticket({'ticket_id': 'DEMO-CHAT-01', 'channel': 'chat', 'customer_id': 'CUST-1001', 'subject': '', 'body': 'Our container deployments keep failing during health check verification. How do we fix this?'}))"
+```
 
-#### Demo Step 3: PII Guardrail Block (10:30 – 12:00)
-- **Action:** Pass a ticket containing a sensitive credential:
-  ```bash
-  python3 -c "from src.api import process_ticket; print(process_ticket({'ticket_id': 'TCK-DEMO-03', 'channel': 'Email', 'customer_id': 'CUST-303', 'subject': 'My key is sk-or-v1-99af88bcd123', 'body': 'Here is my active bearer token sk-or-v1-99af88bcd123 please fix my account', 'timestamp': '2026-09-10T10:10:00Z'}))"
-  ```
-- **Explain Output:** Point out how `src/guardrails.py` detected the hyphenated API key (`sk-or-v1-...`), triggered a `BLOCK` status, prevented response generation, and logged the governance alert.
+---
 
-#### Demo Step 4: Unattended Evaluation Run (12:00 – 14:00)
-- **Action:** Execute the unattended harness across the validation dataset:
-  ```bash
-  python3 evaluation/harness.py --input data/validation_tickets.json --output evaluation/results/metrics_report.json
-  ```
-- **Explain Output:** Show the evaluation progress bar processing all 80 validation tickets in single-run mode. Open `evaluation/results/metrics_report.md` to show 100% completion with 0 manual interventions.
+#### 🧪 Demo Case 2: Human Escalation Payload (Daniel's Policy / Enterprise Tier)
+- **What it demonstrates:** Mandatory human escalation rule for compliance & security inquiries (`compliance_request` intent), generating a complete `EscalationPayload`.
+- **Copy-Paste JSON for Swagger UI / Postman:**
+```json
+{
+  "ticket_id": "DEMO-EMAIL-02",
+  "channel": "email",
+  "customer_id": "CUST-1002",
+  "customer_tier": "enterprise",
+  "subject": "Compliance log retention inquiry",
+  "body": "Our auditor requires 6 months of security access logs. Can we export these logs and are they retained?",
+  "customer_region": "europe",
+  "language_fluency": "fluent"
+}
+```
+
+---
+
+#### 🧪 Demo Case 3: Grounded Answer with API Citation
+- **What it demonstrates:** RAG retrieval over rate limit documentation (`DOC-API-001`) with automatic citation injection.
+- **Copy-Paste JSON for Swagger UI / Postman:**
+```json
+{
+  "ticket_id": "DEMO-DOCS-03",
+  "channel": "docs_comment",
+  "customer_id": "CUST-1003",
+  "customer_tier": "business",
+  "subject": "API Rate Limit Headers",
+  "body": "Which response headers indicate our remaining API rate limit quota?",
+  "customer_region": "asia_pacific",
+  "language_fluency": "fluent"
+}
+```
+
+---
+
+#### 🧪 Demo Case 4: Safety PII Guardrail Block
+- **What it demonstrates:** Guardrail suite detecting hyphenated API key (`sk-or-v1-...`), triggering a `BLOCK` action before response transmission.
+- **Copy-Paste JSON for Swagger UI / Postman:**
+```json
+{
+  "ticket_id": "DEMO-GUARDRAIL-05",
+  "channel": "chat",
+  "customer_id": "CUST-1005",
+  "customer_tier": "standard",
+  "subject": "PII Guardrail Test",
+  "body": "Please assist with API key sk-or-v1-99999999999999999999999999999999 verification.",
+  "customer_region": "north_america",
+  "language_fluency": "fluent"
+}
+```
+
+---
+
+#### 🧪 Demo Case 5: Unattended Evaluation Harness Run
+- **What it demonstrates:** Full automated evaluation over `validation_tickets.json` (80 tickets) running single-run mode with 0 manual interventions.
+- **CLI Terminal Command:**
+```bash
+python3 evaluation/harness.py --input Capstone_Pack/05_Datasets/validation_tickets.json --output evaluation/results/
+```
+- **Explain Output:** Open `evaluation/results/metrics_report.md` on screen to show 100% completion, 55% FCR, 0 PII leaks, and 100% decision logging.
 
 ---
 

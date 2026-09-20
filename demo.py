@@ -84,6 +84,7 @@ def run_demo():
         print(f"Channel: {sample['channel'].upper()} | Tier: {sample['customer_tier'].upper()}")
         print(f"Subject: {sample.get('subject') or '(No Subject)'}")
         print(f"Body: {sample['body']}")
+        print(f"\n📋 [COPY-PASTE JSON FOR POST /process_ticket]:\n{json.dumps(sample, indent=2)}")
 
         t0 = time.time()
 
