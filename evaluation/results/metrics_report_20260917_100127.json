@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-09-17T10:01:27.261364",
+  "input_dataset": "Capstone_Pack/05_Datasets/validation_tickets.json",
+  "total_duration_seconds": 652.68,
+  "volume": {
+    "total_tickets_processed": 80,
+    "answered_automatically": 44,
+    "escalated_to_tier2": 36,
+    "blocked_by_guardrails": 0
+  },
+  "business_outcomes": {
+    "first_contact_resolution_pct": 55.0,
+    "target_fcr_pct": 60.0,
+    "escalation_rate_pct": 45.0,
+    "target_escalation_rate_pct": 30.0,
+    "estimated_mean_reply_time_seconds": 8.16
+  },
+  "technical_performance": {
+    "intent_classification_accuracy_pct": 82.5,
+    "target_intent_accuracy_pct": 85.0,
+    "retrieval_hit_rate_pct": 5.0,
+    "latency_median_ms": 4941.2,
+    "latency_p95_ms": 22302.14,
+    "target_p95_latency_sec": 3.0
+  },
+  "governance": {
+    "total_decisions_logged": 80,
+    "pii_data_leakage_events": 0,
+    "guardrail_activations_by_type": {}
+  }
+}

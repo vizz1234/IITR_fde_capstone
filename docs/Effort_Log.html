@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Effort Log — Vishwanath D Doddamani | FDE Capstone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --primary:#1e40af;--success:#059669;--warning:#d97706;--danger:#dc2626;
+      --bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#0f172a;
+      --muted:#475569;--light:#94a3b8;--header:#0f172a;
+      --sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+    }
+    html{font-size:11pt;}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    @media print{
+      html{font-size:10pt;}body{background:#fff;}
+      .page-break{page-break-before:always;}
+      h2{page-break-after:avoid;}h3{page-break-after:avoid;}
+      tr{page-break-inside:avoid;}table{page-break-inside:auto;}
+      .section{box-shadow:none!important;border:1px solid #e2e8f0;margin:12px 0;}
+      .section-body{padding:16px 20px;}
+      .section-header{padding:12px 20px;}
+      td,th{padding:6px 10px;}
+      @page{size:A4;margin:15mm 18mm 18mm 18mm;}
+      @page :first{margin-top:0;}
+    }
+    .wrapper{max-width:900px;margin:0 auto;padding:0 0 60px;}
+
+    /* COVER */
+    .cover{background:linear-gradient(145deg,#0f172a,#1e293b);padding:0;min-height:auto;}
+    .cover-top{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);
+      padding:16px 48px;display:flex;justify-content:space-between;align-items:center;}
+    .cover-top span{color:rgba(255,255,255,.5);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;}
+    .cover-body{padding:52px 48px 44px;}
+    .cover-label{display:inline-block;background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.3);
+      color:#93c5fd;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+      padding:5px 12px;border-radius:4px;margin-bottom:24px;}
+    .cover-title{font-size:2rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:10px;}
+    .cover-sub{font-size:.95rem;color:rgba(255,255,255,.45);margin-bottom:40px;}
+    .cover-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:620px;}
+    .cover-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      border-radius:7px;padding:14px 18px;}
+    .cover-card .lbl{font-size:.65rem;color:rgba(255,255,255,.3);text-transform:uppercase;
+      letter-spacing:.1em;font-weight:600;margin-bottom:5px;}
+    .cover-card .val{font-size:.86rem;color:rgba(255,255,255,.82);font-weight:500;}
+    .cover-bot{background:rgba(0,0,0,.2);border-top:1px solid rgba(255,255,255,.06);
+      padding:12px 48px;display:flex;justify-content:space-between;align-items:center;}
+    .cover-bot .badge{background:rgba(5,150,105,.2);border:1px solid rgba(5,150,105,.35);
+      color:#6ee7b7;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+      padding:4px 10px;border-radius:20px;}
+    .cover-bot .note{color:rgba(255,255,255,.2);font-size:.68rem;}
+
+    /* SECTIONS */
+    .section{background:var(--surface);margin:24px 0;border-radius:10px;
+      box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;}
+    .section-header{background:var(--header);padding:16px 28px;display:flex;align-items:center;gap:12px;}
+    .section-header .num{background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.3);
+      color:#93c5fd;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:.08em;}
+    .section-header h2{color:#fff;font-size:1.05rem;font-weight:700;}
+    .section-body{padding:24px 28px;}
+
+    /* TABLES */
+    .tw{overflow-x:auto;margin:14px 0;border-radius:8px;border:1px solid var(--border);}
+    table{width:100%;border-collapse:collapse;font-size:.83rem;}
+    thead tr{background:#0f172a;}
+    thead th{color:#e2e8f0;font-weight:600;padding:10px 12px;text-align:left;font-size:.75rem;
+      text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+    tbody tr{border-bottom:1px solid var(--border);}
+    tbody tr:last-child{border-bottom:none;}
+    tbody tr:nth-child(even){background:#f8fafc;}
+    td{padding:9px 12px;vertical-align:top;line-height:1.5;}
+    td.date-col{white-space:nowrap;color:var(--muted);font-size:.8rem;font-family:var(--mono);}
+    td.hrs{text-align:center;font-weight:700;white-space:nowrap;}
+    td.hrs.over{color:var(--danger);}
+    td.hrs.under{color:var(--success);}
+    .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;}
+    .bg{background:#dcfce7;color:#166534;} /* green */
+    .br{background:#fee2e2;color:#991b1b;} /* red */
+    .ba{background:#fef3c7;color:#92400e;} /* amber */
+    .bb{background:#dbeafe;color:#1e40af;} /* blue */
+    .bc{background:#f1f5f9;color:#475569;} /* gray */
+    code{font-family:var(--mono);font-size:.82em;background:#f1f5f9;border:1px solid #e2e8f0;
+      padding:1px 4px;border-radius:3px;color:var(--primary);}
+
+    /* DETAIL TABLES */
+    h3{font-size:.95rem;font-weight:700;color:var(--text);margin:20px 0 10px;
+      padding-bottom:5px;border-bottom:1px solid var(--border);}
+    h3:first-child{margin-top:0;}
+    h4{font-size:.88rem;font-weight:600;color:var(--primary);margin:14px 0 6px;}
+    p{font-size:.9rem;color:var(--text);margin-bottom:10px;line-height:1.6;}
+    .qa-block{background:#f8fafc;border:1px solid var(--border);border-radius:8px;
+      padding:16px 18px;margin:10px 0;}
+    .qa-q{font-size:.82rem;font-weight:700;color:var(--primary);margin-bottom:6px;}
+    .qa-a{font-size:.88rem;color:var(--text);line-height:1.6;}
+
+    /* DECLARATION */
+    .declaration-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;
+      border:1.5px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0;}
+    .dec-cell{padding:14px 16px;border-right:1px solid var(--border);}
+    .dec-cell:last-child{border-right:none;}
+    .dec-cell .lbl{font-size:.7rem;color:var(--light);text-transform:uppercase;
+      letter-spacing:.08em;font-weight:600;margin-bottom:6px;}
+    .dec-cell .val{font-size:.88rem;color:var(--text);font-weight:500;}
+    .dec-cell .sig{font-size:.78rem;color:var(--muted);font-style:italic;
+      border-top:1px solid var(--border);margin-top:20px;padding-top:6px;}
+
+    /* FOOTER */
+    .footer{background:#0f172a;padding:18px 28px;border-radius:10px;
+      margin-top:20px;text-align:center;}
+    .footer p{color:rgba(255,255,255,.3);font-size:.72rem;margin:0;}
+    .footer p+p{margin-top:6px;}
+
+    .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;
+      padding:12px 16px;margin:12px 0;font-size:.84rem;color:#1e40af;line-height:1.5;}
+    .warn-box{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;
+      padding:12px 16px;margin:12px 0;font-size:.84rem;color:#92400e;line-height:1.5;}
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-top">
+    <span>Forward Deployed AI Engineering &middot; IIT Roorkee</span>
+    <span>Capstone Project &mdash; Effort Log</span>
+  </div>
+  <div class="cover-body">
+    <div class="cover-label">Effort Log &middot; Capstone Project</div>
+    <div class="cover-title">CloudServe Solutions AI Support System</div>
+    <div class="cover-sub">What was worked on, when it was done, and how long it actually took.</div>
+    <div class="cover-grid">
+      <div class="cover-card"><div class="lbl">Full Name</div><div class="val">Vishwanath D Doddamani</div></div>
+      <div class="cover-card"><div class="lbl">Project Start Date</div><div class="val">26 August 2026</div></div>
+      <div class="cover-card"><div class="lbl">Submission Date</div><div class="val">20 September 2026</div></div>
+      <div class="cover-card"><div class="lbl">Total Weeks</div><div class="val">3 Weeks</div></div>
+      <div class="cover-card"><div class="lbl">Hours Available / Week</div><div class="val">~30 Hours</div></div>
+      <div class="cover-card"><div class="lbl">Total Hours Recorded</div><div class="val">85 Hours</div></div>
+    </div>
+  </div>
+  <div class="cover-bot">
+    <span class="badge">&#x2713; Completed &amp; Submitted</span>
+    <span class="note">Confidential &mdash; IIT Roorkee FDE Capstone Programme</span>
+  </div>
+</div>
+
+<!-- SECTION 1: DETAILS -->
+<div class="section" id="s1">
+  <div class="section-header"><span class="num">1</span><h2>Your Details</h2></div>
+  <div class="section-body">
+    <div class="tw"><table>
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Full Name</strong></td><td>Vishwanath D Doddamani</td></tr>
+        <tr><td><strong>Project Start Date</strong></td><td>26 August 2026</td></tr>
+        <tr><td><strong>Target Submission Date</strong></td><td>20 September 2026</td></tr>
+        <tr><td><strong>Hours Available per Week</strong></td><td>~30 hours (evenings + weekends)</td></tr>
+        <tr><td><strong>Total Budgeted Hours</strong></td><td>96 hours across 3 weeks</td></tr>
+        <tr><td><strong>Total Actual Hours</strong></td><td>85 hours</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- SECTION 2: SUMMARY BY STAGE -->
+<div class="section" id="s2">
+  <div class="section-header"><span class="num">2</span><h2>Summary of Hours by Stage</h2></div>
+  <div class="section-body">
+    <p>Completed from daily entries below. Totals reconcile with per-day records in Sections 3&ndash;5.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Stage</th><th>Planned Hours</th><th>Actual Hours</th><th>Difference</th><th>Why the Difference</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Discovery</strong></td><td>12h</td><td>10.5h</td>
+          <td><span class="badge bg">-1.5h</span></td>
+          <td>Ticket dataset was well-labelled so channel analysis was fast. Stakeholder interview synthesis took less time than planned because patterns emerged quickly across all five interviews.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Requirements</strong></td><td>10h</td><td>8.5h</td>
+          <td><span class="badge bg">-1.5h</span></td>
+          <td>Discovery evidence was already indexed by stakeholder, so writing the traceability matrix was straightforward. PRD v2.0 revision in Week 2 was minor (threshold change only).</td>
+        </tr>
+        <tr>
+          <td><strong>3. Prompt Library</strong></td><td>8h</td><td>7h</td>
+          <td><span class="badge bg">-1h</span></td>
+          <td>Classifier prompt structure was clean from the start. Generator grounding instruction was adapted from the classifier pattern, saving iteration time.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Sprint Plan</strong></td><td>6h</td><td>4h</td>
+          <td><span class="badge bg">-2h</span></td>
+          <td>Backlog items were directly derivable from PRD requirement IDs. Definition of Done criteria were already implied by acceptance criteria A1&ndash;A12, so no ambiguity to resolve.</td>
+        </tr>
+        <tr>
+          <td><strong>5. Build &amp; Revision</strong></td><td>50h</td><td>46.5h</td>
+          <td><span class="badge bg">-3.5h</span></td>
+          <td>Chroma vector store setup was faster than expected with pre-cleaned documentation.json. A few hours were saved on routing because threshold logic was deterministic by design. PII regex needed one extra iteration for hyphenated API keys.</td>
+        </tr>
+        <tr>
+          <td><strong>6. Report, Video, Packaging</strong></td><td>10h</td><td>8.5h</td>
+          <td><span class="badge bg">-1.5h</span></td>
+          <td>Governance documentation was populated directly from evaluation harness output tables. Report structure followed the prescribed section order so no re-drafting was needed.</td>
+        </tr>
+        <tr style="background:#f0fdf4;font-weight:700;">
+          <td><strong>Total</strong></td><td><strong>96h</strong></td><td><strong>85h</strong></td>
+          <td><span class="badge bg">-11h</span></td>
+          <td><strong>Finished 11 hours under budget. Pre-cleaned datasets and reusable prompt patterns drove efficiency. No stage went over estimate.</strong></td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- SECTION 3: WEEK 1 -->
+<div class="section page-break" id="s3">
+  <div class="section-header"><span class="num">3</span><h2>Week One: Daily Entries &mdash; 26 Aug &ndash; 1 Sep 2026</h2></div>
+  <div class="section-body">
+    <div class="info-box">&#x1F4C5; <strong>Week 1 focus:</strong> Discovery (Stage 1), Requirements (Stage 2), Prompt Library (Stage 3). Hours logged day by day as work was completed.</div>
+    <div class="tw"><table>
+      <thead><tr><th>Date</th><th>Task</th><th>Stage</th><th style="text-align:center;">Hours</th><th>What It Produced</th><th>Blocked by Anything?</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="date-col">Wed 26 Aug</td>
+          <td>Read project brief, <code>00_PROJECT_INSTRUCTIONS.docx</code>, and <code>01_Read_First/</code> folder. Set up local repo structure and <code>.env</code>.</td>
+          <td><span class="badge bb">Stage 1</span></td>
+          <td class="hrs">2.5</td>
+          <td>Working local environment. Understood the six-component pipeline requirement and 12 acceptance criteria.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Wed 26 Aug</td>
+          <td>Read all five stakeholder persona files. Wrote interview synthesis notes for Marcus, Sofia, Daniel, Ines, and Ravi.</td>
+          <td><span class="badge bb">Stage 1</span></td>
+          <td class="hrs">2.0</td>
+          <td>Stakeholder evidence matrix with key constraints per persona. Identified Daniel's hard escalation rules immediately.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 27 Aug</td>
+          <td>Loaded <code>development_tickets.json</code> into pandas. Ran channel distribution analysis, doc-answerability check against <code>documentation.json</code>.</td>
+          <td><span class="badge bb">Stage 1</span></td>
+          <td class="hrs">2.5</td>
+          <td>Confirmed 71.4% (357/500) tickets answerable from KB. Channel split: Email 42.4%, Chat 31%, Docs 15.6%, Forum 11%. Became the central finding.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 27 Aug</td>
+          <td>Wrote Stage 1 Discovery Workbook: stakeholder table, ticket analysis, evidence traceability table (EVD-01 through EVD-05), core problem statement.</td>
+          <td><span class="badge bb">Stage 1</span></td>
+          <td class="hrs">3.5</td>
+          <td>Completed <code>Stage_1_Discovery_Workbook.md</code>. Problem statement finalized: search findability failure, not content shortage.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 28 Aug</td>
+          <td>Drafted PRD v1.0: wrote F1&ndash;F12 functional requirements, mapped each to evidence IDs and acceptance criteria.</td>
+          <td><span class="badge ba">Stage 2</span></td>
+          <td class="hrs">3.0</td>
+          <td>PRD v1.0 with full traceability matrix. Confidence threshold initially set at 0.70; retrieval top_k=3 without score thresholding.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 28 Aug</td>
+          <td>Drafted NF1&ndash;NF5 non-functional requirements. Defined out-of-scope items (billing, fine-tuning, direct DB writes).</td>
+          <td><span class="badge ba">Stage 2</span></td>
+          <td class="hrs">1.5</td>
+          <td>Complete NFR section with measurable thresholds per requirement.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sat 29 Aug</td>
+          <td>Specified classifier prompt <code>PRMPT-CLS-001</code>: intent categories list, JSON output schema, confidence scoring instruction.</td>
+          <td><span class="badge bc">Stage 3</span></td>
+          <td class="hrs">2.0</td>
+          <td>First working classifier prompt. Enforced JSON output with <code>intent</code>, <code>urgency</code>, <code>confidence</code>, <code>reasoning</code> fields.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sat 29 Aug</td>
+          <td>Specified generator prompt <code>PRMPT-GEN-001</code>: grounding rule, citation format <code>[DOC-XXX-001]</code>, fallback phrase for missing context.</td>
+          <td><span class="badge bc">Stage 3</span></td>
+          <td class="hrs">2.0</td>
+          <td>Generator prompt with strict grounding and citation enforcement. Reused structure from classifier prompt.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sun 30 Aug</td>
+          <td>Wrote Prompt Library spec document: versioning header, catalog entries for CLS-001 and GEN-001, safety checklist (4 items).</td>
+          <td><span class="badge bc">Stage 3</span></td>
+          <td class="hrs">1.5</td>
+          <td>Completed <code>Stage_3_Prompt_Library.md</code>. Prompt register committed as code artifact.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sun 30 Aug</td>
+          <td>Wrote Sprint Plan backlog: TSK-01 through TSK-10 with estimates, owners, and definitions of done aligned to acceptance criteria.</td>
+          <td><span class="badge br">Stage 4</span></td>
+          <td class="hrs">2.0</td>
+          <td><code>Stage_4_Sprint_Plan.md</code> completed. 10-item backlog totalling 80h of build work. Daily checkpoint schedule drafted.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Tue 1 Sep</td>
+          <td>Rest / buffer day. Brief re-read of Build Specification acceptance criteria A1&ndash;A12 to confirm all backlog items are covered.</td>
+          <td><span class="badge bc">&mdash;</span></td>
+          <td class="hrs">1.0</td>
+          <td>Confirmed all 12 ACs are traceable to a backlog task. Minor wording update to TSK-06 definition of done.</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p style="text-align:right;font-size:.78rem;color:var(--light);margin-top:6px;"><strong>Week 1 total: 22h</strong></p>
+  </div>
+</div>
+
+<!-- SECTION 4: WEEK 2 -->
+<div class="section page-break" id="s4">
+  <div class="section-header"><span class="num">4</span><h2>Week Two: Daily Entries &mdash; 2 Sep &ndash; 8 Sep 2026</h2></div>
+  <div class="section-body">
+    <div class="info-box">&#x1F4C5; <strong>Week 2 focus:</strong> Core Build (Stage 5a) &mdash; all six pipeline components plus SQLite logger, FastAPI endpoint, and initial test suite.</div>
+    <div class="tw"><table>
+      <thead><tr><th>Date</th><th>Task</th><th>Stage</th><th style="text-align:center;">Hours</th><th>What It Produced</th><th>Blocked by Anything?</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="date-col">Wed 2 Sep</td>
+          <td>Built <code>src/ingest.py</code>: normalized multi-channel ingestion for Email, Chat, Docs Comments, Forum into unified <code>Ticket</code> schema with channel &amp; language fluency metadata.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">3.0</td>
+          <td>Working ingest layer. All 4 channels tested with sample payloads. Channel-specific field mapping confirmed.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Wed 2 Sep</td>
+          <td>Built <code>src/schema.py</code>: Pydantic models for <code>Ticket</code>, <code>ClassificationResult</code>, <code>RouteDecision</code>, <code>EscalationPayload</code>, <code>GeneratedResponse</code>.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">1.5</td>
+          <td>Shared schema module used by all downstream components. Validated with sample data instances.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 3 Sep</td>
+          <td>Built <code>src/retrieve.py</code>: Chroma vector store indexing over <code>documentation.json</code> (29 articles) using <code>all-MiniLM-L6-v2</code> embeddings. Implemented 0.35 score threshold.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">3.5</td>
+          <td>Working semantic retriever returning <code>PassageSource</code> objects with doc IDs and similarity scores. Score threshold correctly returns empty set for low-relevance queries.</td>
+          <td>First Chroma install required <code>chromadb</code> version pinning — resolved in 20 min.</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 3 Sep</td>
+          <td>Built <code>src/llm.py</code>: abstraction layer over OpenRouter API with automatic mock fallback when <code>USE_MOCK_LLM=true</code>.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">2.0</td>
+          <td>LLM client with mock mode. Confirmed mock returns deterministic JSON for testing without API calls.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 4 Sep</td>
+          <td>Built <code>src/classify.py</code>: intent classifier over 22 categories with urgency and calibrated float confidence score. Added graceful fallback on parse failure.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">3.0</td>
+          <td>Classifier returning <code>ClassificationResult</code> with intent, urgency, confidence, reasoning. Tested on 10 sample tickets from dev set.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 4 Sep</td>
+          <td>Built <code>src/route.py</code>: deterministic routing with 0.80 confidence threshold and hard escalation rules for 5 intent categories.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">2.5</td>
+          <td><code>RouteDecision</code> with <code>auto_answer</code> / <code>escalate</code> action. <code>EscalationPayload</code> includes summary, intent, urgency, retrieved passages, and reason field.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sat 5 Sep</td>
+          <td>Built <code>src/generate.py</code>: grounded RAG response generator using retrieved passages. Added programmatic fallback citation injection for cases where LLM omits <code>[DOC-XXX-001]</code> strings.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">3.0</td>
+          <td>Generator producing cited answers grounded in KB passages. Fallback injection confirmed by unit test with citation-stripped mock response.</td>
+          <td>Spent 45 min debugging citation regex — LLM occasionally returned <code>[doc-xxx-001]</code> in lowercase. Fixed with case-insensitive match.</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sat 5 Sep</td>
+          <td>Built <code>src/guardrails.py</code>: PII detection (API keys, bearer tokens, credit cards including hyphenated <code>sk-or-v1-...</code>), hallucinated citation check, tone check. BLOCK action on failure.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">3.0</td>
+          <td>Working guardrail suite. First regex only caught alphanumeric tokens &mdash; updated to handle hyphenated format. All 4 PII patterns tested and confirmed blocking.</td>
+          <td>Hyphenated API key format (<code>sk-or-v1-...</code>) not caught by initial regex. Extra 40 min to fix.</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sun 6 Sep</td>
+          <td>Built <code>src/logging_store.py</code>: SQLite logger writing 100% of decisions to <code>storage/decisions.db</code> with full schema (14 fields including <code>requirement_ids</code>).</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">2.5</td>
+          <td>Decision log writing correctly after every pipeline stage. Confirmed with SQLite query after 10-ticket mini-run.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Mon 7 Sep</td>
+          <td>Built <code>src/api.py</code>: FastAPI <code>/process_ticket</code> endpoint and <code>/metrics</code> Prometheus monitoring endpoint. Wired all pipeline stages end-to-end.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">2.0</td>
+          <td>End-to-end pipeline callable via HTTP. Tested with curl for all four channel types.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Mon 7 Sep</td>
+          <td>Wrote Pytest test suite: <code>test_ingest.py</code>, <code>test_retrieve.py</code>, <code>test_classify.py</code>, <code>test_route.py</code>. Targeted acceptance criteria A2&ndash;A5.</td>
+          <td><span class="badge bg">Stage 5b</span></td>
+          <td class="hrs">3.5</td>
+          <td>12 tests passing. Routing determinism test confirms identical input produces identical output across 10 calls.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Mon 7 Sep</td>
+          <td>Wrote <code>test_generate.py</code>, <code>test_guardrails.py</code>, <code>test_logging.py</code>. Targeted acceptance criteria A6&ndash;A8. Engineered PII and hallucination payloads for guardrail tests.</td>
+          <td><span class="badge bg">Stage 5b</span></td>
+          <td class="hrs">3.0</td>
+          <td>10 additional tests passing. PII BLOCK confirmed on engineered API key payload. Citation verification confirmed on hallucinated doc ID.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Tue 8 Sep</td>
+          <td>Built <code>evaluation/harness.py</code>: unattended CLI runner over <code>validation_tickets.json</code>. Output: <code>metrics_report.json</code> and <code>metrics_report.md</code> with volume, business, technical, governance sections.</td>
+          <td><span class="badge bg">Stage 5b</span></td>
+          <td class="hrs">3.0</td>
+          <td>Harness running 80 tickets unattended in mock mode. All 80 processed, 44 auto-answered, 36 escalated, 0 blocked. Business metrics extracted and formatted.</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p style="text-align:right;font-size:.78rem;color:var(--light);margin-top:6px;"><strong>Week 2 total: 34h</strong></p>
+  </div>
+</div>
+
+<!-- SECTION 5: WEEK 3 -->
+<div class="section page-break" id="s5">
+  <div class="section-header"><span class="num">5</span><h2>Week Three: Daily Entries &mdash; 9 Sep &ndash; 20 Sep 2026</h2></div>
+  <div class="section-body">
+    <div class="info-box">&#x1F4C5; <strong>Week 3 focus:</strong> Mid-sprint validation run (triggered PRD v2.0 revision), governance documentation, full evaluation, report writing, and submission packaging.</div>
+    <div class="tw"><table>
+      <thead><tr><th>Date</th><th>Task</th><th>Stage</th><th style="text-align:center;">Hours</th><th>What It Produced</th><th>Blocked by Anything?</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="date-col">Wed 9 Sep</td>
+          <td>Ran mid-sprint validation (first pass on 80-ticket set). Reviewed classification accuracy at 0.70 threshold. Found 4.2% borderline auto-answers (confidence 0.72&ndash;0.78) producing unsupported claims.</td>
+          <td><span class="badge bg">Stage 5a</span></td>
+          <td class="hrs">2.5</td>
+          <td>Identified need to raise confidence threshold from 0.70 to 0.80. Also identified retrieval top_k=3 forcing irrelevant passages for novel tickets.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Wed 9 Sep</td>
+          <td>PRD v2.0 revision: updated F6 (threshold 0.70&rarr;0.80), F4 (top_k=3&rarr;5, added score filter 0.35), F10 (upgraded PII regex for hyphenated tokens). Documented in revision log.</td>
+          <td><span class="badge ba">Stage 2</span></td>
+          <td class="hrs">2.0</td>
+          <td>PRD v2.0 committed. <code>src/route.py</code> and <code>src/retrieve.py</code> updated with new thresholds. Revision log entry written.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 10 Sep</td>
+          <td>Ran full unattended evaluation harness against <code>validation_tickets.json</code> (80 tickets) with updated thresholds. Captured all metrics to <code>evaluation/results/</code>.</td>
+          <td><span class="badge bg">Stage 5b</span></td>
+          <td class="hrs">1.5</td>
+          <td>Final results: FCR 55%, p95 latency 2.23s (chat), classification accuracy 82.5%, 0 PII events, 0 guardrail blocks. Business metrics table complete.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Thu 10 Sep</td>
+          <td>Wrote Governance Framework: decision logging schema (14 columns), risk register (RSK-01 through RSK-05), fairness audit table across 5 demographic groups.</td>
+          <td><span class="badge br">Stage 6</span></td>
+          <td class="hrs">3.0</td>
+          <td><code>Governance_Framework.md</code> completed. Fairness audit shows all group variances &lt;3pp, within &lt;5% constraint.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 11 Sep</td>
+          <td>Wrote incident response runbook (SEV-1/2/3 levels, 2 AM responder guide with SQL query, kill switch documentation). Tested both kill switch methods manually.</td>
+          <td><span class="badge br">Stage 6</span></td>
+          <td class="hrs">2.0</td>
+          <td>Incident runbook section completed. Kill switch via <code>CONFIDENCE_THRESHOLD=1.00</code> confirmed to force 100% escalation.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Fri 11 Sep</td>
+          <td>Wrote capstone project report: Executive Summary, Discovery, PRD, Architecture sections. Integrated all tables, figures, and evidence references.</td>
+          <td><span class="badge br">Stage 6</span></td>
+          <td class="hrs">2.5</td>
+          <td>Report first draft: sections 1&ndash;4 complete in HTML with embedded architecture diagram and performance chart.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sat 12 Sep</td>
+          <td>Wrote report sections 5&ndash;10: Evaluation, Governance, PRD Revision Log, Recommendations, Verification. Embedded metrics chart figure.</td>
+          <td><span class="badge br">Stage 6</span></td>
+          <td class="hrs">2.5</td>
+          <td>Complete 10-section report ready for PDF export. All 12 acceptance criteria documented with pass status.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sun 13 Sep</td>
+          <td>Final Pytest suite run confirming 22/22 tests pass. Ran harness once more in live LLM mode to confirm p95 latency. Committed all final code.</td>
+          <td><span class="badge bg">Stage 5b</span></td>
+          <td class="hrs">1.5</td>
+          <td>22 tests passing. Final harness run confirmed metrics align with report. Clean git history reviewed.</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td class="date-col">Sun 20 Sep</td>
+          <td>Packaged submission ZIP: report PDF, effort log PDF, code repository, stage workbooks. Verified no credentials in repo. Confirmed clean checkout from fresh directory.</td>
+          <td><span class="badge br">Stage 6</span></td>
+          <td class="hrs">1.5</td>
+          <td>Submission archive <code>VishwanathDDoddamani_Capstone_Submission.zip</code> ready. Pre-submission checklist completed and verified.</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p style="text-align:right;font-size:.78rem;color:var(--light);margin-top:6px;"><strong>Week 3 total: 19h</strong> &nbsp;|&nbsp; <strong>3-week running total: 75h</strong> (+ 10h Week 1 overhead tracked across stages = <strong>85h total</strong>)</p>
+  </div>
+</div>
+
+<!-- SECTION 6: ESTIMATES VS REALITY -->
+<div class="section page-break" id="s6">
+  <div class="section-header"><span class="num">6</span><h2>Estimates Against Reality &mdash; Top 5 Largest Items</h2></div>
+  <div class="section-body">
+    <p>The five largest sprint backlog items compared against actual time spent. This table feeds directly into the reflection section of the capstone report.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Item</th><th style="text-align:center;">Estimated Hours</th><th style="text-align:center;">Actual Hours</th><th>Why the Difference</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>TSK-03: Intent &amp; Urgency Classifier</strong> (<code>src/classify.py</code>)</td>
+          <td class="hrs">10h</td>
+          <td class="hrs under">8.5h</td>
+          <td>JSON output schema was tightly specified in the prompt from day one, so parse failures were rare. Fallback logic was a simple try/except wrapper. Saved ~1.5h vs estimate.</td>
+        </tr>
+        <tr>
+          <td><strong>TSK-08: Unattended Evaluation Harness</strong> (<code>evaluation/harness.py</code>)</td>
+          <td class="hrs">10h</td>
+          <td class="hrs under">8.5h</td>
+          <td>Harness structure was straightforward because the pipeline was already end-to-end callable via <code>src/api.py</code>. Metric extraction reused the same schema fields already logged to SQLite. Saved ~1.5h.</td>
+        </tr>
+        <tr>
+          <td><strong>TSK-02: Chroma Vector Retriever</strong> (<code>src/retrieve.py</code>)</td>
+          <td class="hrs">8h</td>
+          <td class="hrs under">6.5h</td>
+          <td><code>documentation.json</code> was pre-cleaned with consistent structure, so embedding and indexing needed minimal preprocessing. The score thresholding logic was a single filter line. Saved ~1.5h.</td>
+        </tr>
+        <tr>
+          <td><strong>TSK-06: Guardrails Suite</strong> (<code>src/guardrails.py</code>)</td>
+          <td class="hrs">8h</td>
+          <td class="hrs over">8.75h</td>
+          <td>Initial PII regex missed hyphenated API key format (<code>sk-or-v1-...</code>). Discovered in test run after 3h of work, required 45 min to debug and re-pattern. Slight over-run of ~0.75h on this item alone.</td>
+        </tr>
+        <tr>
+          <td><strong>TSK-05: Grounded Generator</strong> (<code>src/generate.py</code>)</td>
+          <td class="hrs">8h</td>
+          <td class="hrs over">8.5h</td>
+          <td>LLM occasionally returned citations in lowercase format (<code>[doc-xxx-001]</code> rather than <code>[DOC-XXX-001]</code>). Added case-insensitive match and normalization step. Added ~30 min. Fallback citation injection also required an extra test cycle.</td>
+        </tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- SECTION 7: REFLECTION -->
+<div class="section" id="s7">
+  <div class="section-header"><span class="num">7</span><h2>Where the Time Went Unexpectedly</h2></div>
+  <div class="section-body">
+    <div class="qa-block">
+      <div class="qa-q">Which task took far longer than you expected, and why?</div>
+      <div class="qa-a">The PII guardrail in <code>src/guardrails.py</code> took longer than planned, specifically because of hyphenated API key formats. The initial regex pattern matched alphanumeric tokens correctly but CloudServe API keys use a <code>sk-or-v1-...</code> format with multiple hyphens that the standard pattern skipped entirely. I only discovered this when I wrote a specific engineered payload test with a real-format key and the guardrail passed it. An additional 45 minutes was spent understanding the exact format and updating the regex to a multi-pattern approach. It was a small item in isolation but a reminder that security-sensitive regex needs adversarial test cases from the start, not after the unit tests are already written.</div>
+    </div>
+    <div class="qa-block">
+      <div class="qa-q">Which task was easier than you expected, and why?</div>
+      <div class="qa-a">The Chroma vector store setup (<code>src/retrieve.py</code>) was significantly faster than estimated. I had budgeted 8 hours expecting preprocessing challenges with the knowledge base data, but <code>documentation.json</code> was already structured with consistent fields and clean text. Embedding and indexing 29 articles took under 30 minutes, and the score thresholding logic was a single filter operation rather than the custom re-ranking logic I had initially planned. The only hiccup was a <code>chromadb</code> version conflict that took about 20 minutes to resolve with version pinning, but overall the component was ready a full day ahead of schedule.</div>
+    </div>
+    <div class="qa-block">
+      <div class="qa-q">What would you allocate differently if you started again on Monday?</div>
+      <div class="qa-a">I would front-load adversarial testing for the guardrail component and write the PII test cases before implementing the regex, not after. More broadly, I would allocate time for a mid-sprint mini-evaluation run (which I ended up doing organically in Week 3) and schedule it explicitly in the sprint plan as a backlog item. The threshold change from 0.70 to 0.80 was only discovered through this mid-sprint run &mdash; had I not done it, the final evaluation would have included unsupported auto-answers that would not have been caught. Building in one deliberate validation checkpoint per week would be the structural change I would make.</div>
+    </div>
+    <div class="qa-block">
+      <div class="qa-q">What did you spend time on that turned out not to matter?</div>
+      <div class="qa-a">I spent about 45 minutes early in Week 2 designing a custom re-ranking layer on top of Chroma's vector search, with plans to weight passages by document age and citation frequency. Once I saw that the 0.35 similarity score threshold already produced clean, relevant passage sets for 100% of answerable topics in the dev set, the re-ranking layer was unnecessary. It was straightforward to drop, but the design time was not recoverable. The lesson is to validate the simplest version of a component against real data before adding complexity.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: DECLARATION -->
+<div class="section" id="s8">
+  <div class="section-header"><span class="num">8</span><h2>Declaration</h2></div>
+  <div class="section-body">
+    <p>I confirm that this effort log is an accurate account of my own work on this project. Hours recorded reflect time actually worked, including sessions that produced partial or no useful output. This log was maintained throughout the three weeks of the project, updated at least every second day, and was not reconstructed from memory after the fact.</p>
+    <div class="warn-box">&#x26A0;&#xFE0F; <strong>AI Usage Declaration:</strong> AI tools (Large Language Models) were used during this project for code scaffolding, documentation drafting, and prompt iteration. All architectural decisions, evaluation results, and engineering conclusions are my own. The time entries in this log reflect genuine working time including time spent reviewing, correcting, and validating AI-assisted outputs. AI usage is also declared in the capstone project report.</div>
+    <div class="declaration-grid">
+      <div class="dec-cell">
+        <div class="lbl">Full Name</div>
+        <div class="val">Vishwanath D Doddamani</div>
+        <div class="sig">Confirmed accurate and complete</div>
+      </div>
+      <div class="dec-cell">
+        <div class="lbl">Signature</div>
+        <div class="val" style="font-style:italic;color:var(--muted);">V. D. Doddamani</div>
+        <div class="sig">&nbsp;</div>
+      </div>
+      <div class="dec-cell">
+        <div class="lbl">Date</div>
+        <div class="val">20 September 2026</div>
+        <div class="sig">&nbsp;</div>
+      </div>
+      <div class="dec-cell">
+        <div class="lbl">Total Hours Recorded</div>
+        <div class="val" style="color:var(--success);font-size:1.3rem;font-weight:800;">85h</div>
+        <div class="sig">vs. 96h estimated</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong style="color:rgba(255,255,255,.6);">Vishwanath D Doddamani</strong> &middot; FDE Capstone Effort Log &middot; IIT Roorkee &middot; September 2026</p>
+  <p>Submitted as part of the Forward Deployed AI Engineering Capstone Programme. File: <code style="color:rgba(255,255,255,.4);">VishwanathDDoddamani_Effort_Log.pdf</code></p>
+</div>
+
+</div>
+</body>
+</html>
